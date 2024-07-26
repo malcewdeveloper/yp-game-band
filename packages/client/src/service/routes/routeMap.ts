@@ -28,6 +28,14 @@ export const relativeRoutes = {
         path: "/sign-up",
         parent: "auth",
     },
+    posts: {
+        path: "",
+        parent: "forum",
+    },
+    post: {
+        path: "/:postId",
+        parent: "posts",
+    },
 };
 
 type TRouteKeys = keyof typeof relativeRoutes;
