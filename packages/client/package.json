@@ -11,6 +11,7 @@
         "test": "jest --passWithNoTests ./"
     },
     "dependencies": {
+        "@ant-design/icons": "^5.4.0",
         "antd": "^5.19.3",
         "axios": "^1.7.2",
         "dotenv": "^16.0.2",
