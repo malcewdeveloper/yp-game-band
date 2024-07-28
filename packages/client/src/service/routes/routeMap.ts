@@ -1,9 +1,6 @@
 export const relativeRoutes = {
-    clientError: {
-        path: "/400",
-    },
-    serverError: {
-        path: "/500",
+    error: {
+        path: "/error/:errorCode",
     },
     forum: {
         path: "/forum",

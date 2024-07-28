@@ -8,6 +8,6 @@ export const AuthGuard: React.FC<PropsWithChildren<any>> = ({ children }) => {
     if (authentificate) {
         return children;
     } else {
-        <Redirect to={routes.signIn.path} />;
+        return <Redirect to={routes.signIn.path} />;
     }
 };
