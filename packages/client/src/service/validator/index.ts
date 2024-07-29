@@ -1,6 +1,6 @@
 import { RuleObject } from "antd/es/form";
 
-export const validationName = (_: RuleObject, value: string) => {
+export const validateName = (_: RuleObject, value: string) => {
     if (!value) {
         return Promise.reject("Поле не может быть пустым");
     }

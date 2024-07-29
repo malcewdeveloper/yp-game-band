@@ -20,21 +20,25 @@ type TAuthActions = {
 
 type TAuthData = {
     me?: TGetMeReponce;
+    loading: boolean;
 };
 
 type TAuthStore = TAuthActions & TAuthData;
 
 const initialState: TAuthData = {
     me: undefined,
+    loading: false,
 };
 
 export const useAuthStore = create<TAuthStore>()(
     devtools(
-        (set) => ({
+        (set, get) => ({
             ...initialState,
             signIn: async (data) => {
                 try {
                     const reponce = await signIn(data);
+                    await get().getMe();
+
                     return reponce.data;
                 } catch (error: unknown) {
                     if (isAxiosError<TAuthError>(error)) {
@@ -44,11 +48,15 @@ export const useAuthStore = create<TAuthStore>()(
                     } else {
                         console.log(error);
                     }
+
+                    throw error;
                 }
             },
             signUp: async (data) => {
                 try {
                     const reponce = await signUp(data);
+                    await get().getMe();
+
                     return reponce.data;
                 } catch (error: unknown) {
                     if (isAxiosError<TAuthError>(error)) {
@@ -58,6 +66,8 @@ export const useAuthStore = create<TAuthStore>()(
                     } else {
                         console.log(error);
                     }
+
+                    throw error;
                 }
             },
             signOut: async () => {
@@ -78,9 +88,16 @@ export const useAuthStore = create<TAuthStore>()(
                     } else {
                         console.log(error);
                     }
+
+                    throw error;
                 }
             },
             getMe: async () => {
+                set((store) => {
+                    store.loading = true;
+                    return store;
+                });
+
                 try {
                     const responce = await getMe();
                     const { data } = responce;
@@ -99,6 +116,13 @@ export const useAuthStore = create<TAuthStore>()(
                     } else {
                         console.log(error);
                     }
+
+                    throw error;
+                } finally {
+                    set((store) => {
+                        store.loading = false;
+                        return store;
+                    });
                 }
             },
         }),
