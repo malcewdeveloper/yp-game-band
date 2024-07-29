@@ -1,5 +1,5 @@
 import { Button, List } from "antd";
-import { AuthGuard, history, routes } from "../../../service";
+import { history, routes } from "../../../service";
 import { generatePath } from "react-router-dom";
 import { data } from "../mocks";
 
@@ -16,15 +16,13 @@ export const PostList: React.FC = () => {
 
     return (
         <>
-            <AuthGuard>
-                <Button
-                    type="primary"
-                    style={{ marginBottom: 16 }}
-                    onClick={createPost}
-                >
-                    New Post
-                </Button>
-            </AuthGuard>
+            <Button
+                type="primary"
+                style={{ marginBottom: 16 }}
+                onClick={createPost}
+            >
+                New Post
+            </Button>
             <List
                 itemLayout="vertical"
                 size="large"
