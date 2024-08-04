@@ -1,17 +1,28 @@
-import React, { PropsWithChildren, useEffect } from "react";
-import { Redirect } from "react-router-dom";
+import React, { PropsWithChildren, useLayoutEffect, useState } from "react";
+import { generatePath } from "react-router-dom";
 import { routes } from "./routeMap";
 import { useAuthStore } from "../../entities/auth";
 import { LoadingOutlined } from "@ant-design/icons";
+import { history } from "../history";
 
 export const AuthGuard: React.FC<PropsWithChildren<any>> = ({ children }) => {
+    const [loading, setLoading] = useState(false);
     const me = useAuthStore((state) => state.me);
-    const loading = useAuthStore((state) => state.loading);
+
     const getMe = useAuthStore((state) => state.getMe);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (me || loading) return;
-        getMe();
+
+        setLoading(true);
+        getMe()
+            .catch(() => {
+                const link = generatePath(routes.signIn.path);
+                history.push(link);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }, [me, loading]);
 
     if (me) {
@@ -19,6 +30,6 @@ export const AuthGuard: React.FC<PropsWithChildren<any>> = ({ children }) => {
     } else if (loading) {
         return <LoadingOutlined />;
     } else {
-        return <Redirect to={routes.signIn.path} />;
+        return null;
     }
 };

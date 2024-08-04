@@ -25,7 +25,7 @@ export const PrivateRoutes = () => {
             <Route path={routes.forum.path} component={Forum} />
             <Route path={routes.game.path} component={Game} />
             <Route path={routes.profile.path} component={Profile} />
-            <Route path="*" component={DefaultPage} />
+            <Route path="/" component={DefaultPage} />
         </Switch>
     );
 };
