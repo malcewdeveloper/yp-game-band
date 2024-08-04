@@ -10,7 +10,6 @@ export const Routes = () => {
     return (
         <ErrorBoundary>
             <Switch>
-                <Route path={routes.error.path} component={ErrorPage} />
                 <Route path={routes.leaderBoard.path} component={LeaderBoard} />
                 <Route path={routes.signIn.path} component={SingIn} />
                 <Route path={routes.singUp.path} component={SingUp} />

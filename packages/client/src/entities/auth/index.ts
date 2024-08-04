@@ -8,36 +8,37 @@ import {
     TSigUpRequest,
 } from "./types";
 import { TAuthError } from "../../service";
-import { isAxiosError } from "axios";
+import { AxiosRequestConfig, isAxiosError, isCancel } from "axios";
 import { notification } from "antd";
 
 type TAuthActions = {
-    signIn: (data: TSigInRequest) => Promise<void>;
-    signUp: (data: TSigUpRequest) => Promise<TSignUpResponce | undefined>;
-    signOut: () => Promise<void>;
-    getMe: () => Promise<TGetMeReponce | undefined>;
+    signIn: (data: TSigInRequest, config?: AxiosRequestConfig) => Promise<void>;
+    signUp: (
+        data: TSigUpRequest,
+        config?: AxiosRequestConfig,
+    ) => Promise<TSignUpResponce | undefined>;
+    signOut: (config?: AxiosRequestConfig) => Promise<void>;
+    getMe: (config?: AxiosRequestConfig) => Promise<TGetMeReponce | undefined>;
 };
 
 type TAuthData = {
     me?: TGetMeReponce;
-    loading: boolean;
 };
 
 type TAuthStore = TAuthActions & TAuthData;
 
 const initialState: TAuthData = {
     me: undefined,
-    loading: false,
 };
 
 export const useAuthStore = create<TAuthStore>()(
     devtools(
         (set, get) => ({
             ...initialState,
-            signIn: async (data) => {
+            signIn: async (data, config) => {
                 try {
-                    const reponce = await signIn(data);
-                    await get().getMe();
+                    const reponce = await signIn(data, config);
+                    await get().getMe(config);
 
                     return reponce.data;
                 } catch (error: unknown) {
@@ -52,13 +53,17 @@ export const useAuthStore = create<TAuthStore>()(
                     throw error;
                 }
             },
-            signUp: async (data) => {
+            signUp: async (data, config) => {
                 try {
-                    const reponce = await signUp(data);
+                    const reponce = await signUp(data, config);
                     await get().getMe();
 
                     return reponce.data;
                 } catch (error: unknown) {
+                    if (isCancel(error)) {
+                        return;
+                    }
+
                     if (isAxiosError<TAuthError>(error)) {
                         notification.error({
                             message: error.response?.data.reason,
@@ -70,9 +75,9 @@ export const useAuthStore = create<TAuthStore>()(
                     throw error;
                 }
             },
-            signOut: async () => {
+            signOut: async (config) => {
                 try {
-                    const responce = await signOut();
+                    const responce = await signOut(config);
 
                     set((store) => {
                         store.me = initialState.me;
@@ -92,14 +97,9 @@ export const useAuthStore = create<TAuthStore>()(
                     throw error;
                 }
             },
-            getMe: async () => {
-                set((store) => {
-                    store.loading = true;
-                    return store;
-                });
-
+            getMe: async (config) => {
                 try {
-                    const responce = await getMe();
+                    const responce = await getMe(config);
                     const { data } = responce;
 
                     set((store) => {
@@ -118,11 +118,6 @@ export const useAuthStore = create<TAuthStore>()(
                     }
 
                     throw error;
-                } finally {
-                    set((store) => {
-                        store.loading = false;
-                        return store;
-                    });
                 }
             },
         }),
