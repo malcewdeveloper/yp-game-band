@@ -98,6 +98,7 @@ export const useAuthStore = create<TAuthStore>()(
                 }
             },
             getMe: async (config) => {
+                // eslint-disable-next-line no-useless-catch
                 try {
                     const responce = await getMe(config);
                     const { data } = responce;
@@ -109,14 +110,6 @@ export const useAuthStore = create<TAuthStore>()(
 
                     return data;
                 } catch (error: unknown) {
-                    if (isAxiosError<TAuthError>(error)) {
-                        notification.error({
-                            message: error.response?.data.reason,
-                        });
-                    } else {
-                        console.log(error);
-                    }
-
                     throw error;
                 }
             },
