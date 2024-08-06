@@ -1,9 +1,6 @@
 export const relativeRoutes = {
-    clientError: {
-        path: "/400",
-    },
-    serverError: {
-        path: "/500",
+    error: {
+        path: "/error/:errorCode?",
     },
     forum: {
         path: "/forum",
@@ -27,6 +24,14 @@ export const relativeRoutes = {
     singUp: {
         path: "/sign-up",
         parent: "auth",
+    },
+    posts: {
+        path: "",
+        parent: "forum",
+    },
+    post: {
+        path: "/:postId",
+        parent: "posts",
     },
 };
 
