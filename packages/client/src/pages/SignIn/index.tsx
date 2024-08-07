@@ -2,13 +2,26 @@ import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Flex, Button, Form, Input, Typography } from "antd";
 import { Link } from "react-router-dom";
-import { routes } from "../../service";
+import { history, routes } from "../../service";
 import { validateLogin, validatePassword } from "../../service/validator";
 import classes from "./SignIn.module.scss";
+import { useAuthStore } from "../../entities/auth";
+
+type TForm = {
+    login: string;
+    password: string;
+};
 
 export const SingIn: React.FC<object> = () => {
-    const onFinish = (values: any) => {
-        console.log("Received values of form: ", values);
+    const signIn = useAuthStore((state) => state.signIn);
+
+    const onFinish = async (values: TForm) => {
+        try {
+            await signIn(values);
+            history.push("/");
+        } catch (error) {
+            void 0;
+        }
     };
 
     return (
